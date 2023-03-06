@@ -39,13 +39,13 @@ public class GitHubJob {
         GHMyself myself = gitHub.getMyself();
         String login = myself.getLogin();
         System.out.println("Connection to " + login);
-        
+
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 try{
                     HashSet<GHPullRequest> newPrs = new HashSet<>();
-                    myself.getAllRepositories()
+                    List<RepositoryDescription> repos = myself.getAllRepositories()
                             .values()
                             .stream()
                             .map(repository -> {
@@ -72,6 +72,7 @@ public class GitHubJob {
                                     throw new RuntimeException(e);
                                 }
                             }).collect(Collectors.toList());
+                    gui.setMenu(login, repos);
                     newPrs.forEach(pr -> {
                         gui.showNotification("New PR in " + pr.getRepository().getFullName(), pr.getTitle());
                     });
